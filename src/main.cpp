@@ -104,19 +104,25 @@ int main() {
     //std::vector<std::array<int, 3>> indices = myCube.getIndices();
 
     // Generate instanced data for 100 spheres
-    const int NUM_SPHERES = 1000;
+    const int NUM_SPHERES = 2000;
 	std::vector<glm::vec4> instancedData(NUM_SPHERES);
 	std::vector<glm::vec3> instancedColors(NUM_SPHERES);
 
-	for (int i = 0; i < NUM_SPHERES; ++i) {
-        float x = (i % 10) * 3.0f - 15.0f;  // 10x10 grid
-        float y = (i / 10) * 3.0f - 15.0f;
-        float z = (i % 10) * 3.0f - 15.0f;
-        float scale = 0.5f + ((float)rand() / RAND_MAX) * 1.0f;
+	int wi = int(std::pow(NUM_SPHERES, 1.0/3.0)); // 10x10x10 grid
 
-		instancedData[i] = glm::vec4(x, y, z, scale);
-		instancedColors[i] = glm::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
-		//instancedColors[i] = glm::vec3(1.0f, 1.0f, 1.0f); // White color for all spheres
+	for (int i = 0; i < wi; ++i) {
+		for (int j = 0; j < wi; ++j) {
+			for (int k = 0; k < wi; ++k) {
+				int index = i * wi * wi + j * wi + k;
+				if (index >= NUM_SPHERES) break;
+				float x = i * 2.0f / wi - 1.0f;  // 10x10 grid
+				float y = j * 2.0f / wi - 1.0f;
+				float z = k * 2.0f / wi - 1.0f;
+				float scale = 0.02f + ((float)rand() / RAND_MAX) * 0.03f;
+				instancedData[index] = glm::vec4(x, y, z, scale);
+				instancedColors[index] = glm::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
+			}
+		}
     }
 
     unsigned int VBO, VAO, EBO;
@@ -186,20 +192,12 @@ int main() {
 		glfwGetFramebufferSize(window, &width, &height);
 		float apsectRatio = static_cast<float>(width) / static_cast<float>(height);
 
-        glm::mat4 view = glm::lookAt(glm::vec3(0, 0, 30), glm::vec3(rightLeft, upDown, inOut), glm::vec3(0, 1, 0));
+        glm::mat4 view = glm::lookAt(glm::vec3(0, 0, 2), glm::vec3(rightLeft, upDown, inOut), glm::vec3(0, 1, 0));
         glm::mat4 projection = glm::perspective(glm::radians(70.0f), apsectRatio, 0.1f, 100.0f);
         shader.setMat4("view", view);
         shader.setMat4("projection", projection);
 
-        for (int i = 0; i < NUM_SPHERES; i++) {
-            // Update positions (e.g., rotate in circle)
-            float time = glfwGetTime();
-            float angle = (i / (float)NUM_SPHERES) * 2.0f * 3.14159f + time;
-            instancedData[i].x = cos(angle) * 10.0f;
-            instancedData[i].y = sin(angle) * 10.0f;
-            instancedData[i].z = 0.0f;
-            // Keep same scale: instanceData[i].w unchanged
-        }
+		sim.update(frameTime);
 
         glBindBuffer(GL_ARRAY_BUFFER, instancedVBO);
         glBufferData(GL_ARRAY_BUFFER, instancedData.size() * sizeof(glm::vec4), instancedData.data(), GL_DYNAMIC_DRAW);
