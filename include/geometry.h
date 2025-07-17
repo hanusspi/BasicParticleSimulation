@@ -7,28 +7,31 @@
 
 class geometry {
 public:
-	geometry() = default;
+    geometry() = default;
+    virtual ~geometry() = default; // Add virtual destructor
 
-	virtual void createGeometry() = 0;
+    virtual void createGeometry() = 0;
 
-	std::vector<glm::vec3> getVertices() const { return vertices; }
-
-	std::vector<std::array<int, 3>> getIndices() const { return indices; }
+    std::vector<glm::vec3> getVertices() const { return vertices; }
+    std::vector<std::array<int, 3>> getIndices() const { return indices; }
 
 protected:
-	std::vector<glm::vec3> vertices;
-	std::vector<std::array<int, 3>> indices;
-	std::vector<glm::vec3> normals;
+    std::vector<glm::vec3> vertices;
+    std::vector<std::array<int, 3>> indices;
+    std::vector<glm::vec3> normals;
 };
 
 class cube : public geometry {
 public:
-	cube();
-	void createGeometry();
+    cube();
+    void createGeometry() override; // Add override keyword
 };
 
 class sphere : public geometry {
 public:
-	sphere(int samplePoints);
-	void createGeometry(int samplePoints);
+    sphere(int samplePoints = 20); // Default parameter
+    void createGeometry() override; // Must match base class signature
+
+private:
+    int samplePoints; // Store as member variable
 };
