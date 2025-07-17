@@ -5,6 +5,7 @@
 #include <iostream>
 #include "shader.h"
 #include "geometry.h"
+#include "sim.h"
 
 // Window dimensions
 const unsigned int SCR_WIDTH = 800;
@@ -81,7 +82,7 @@ int main() {
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-
+    
 
     // Initialize GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -161,6 +162,9 @@ int main() {
 
     Shader shader("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
 
+    Sim sim;
+	sim.init(&instancedData, &instancedColors);
+
 
     // Render loop
     while (!glfwWindowShouldClose(window)) {
@@ -187,15 +191,15 @@ int main() {
         shader.setMat4("view", view);
         shader.setMat4("projection", projection);
 
-        //for (int i = 0; i < NUM_SPHERES; i++) {
-        //    // Update positions (e.g., rotate in circle)
-        //    float time = glfwGetTime();
-        //    float angle = (i / (float)NUM_SPHERES) * 2.0f * 3.14159f + time;
-        //    instancedData[i].x = cos(angle) * 10.0f;
-        //    instancedData[i].y = sin(angle) * 10.0f;
-        //    instancedData[i].z = 0.0f;
-        //    // Keep same scale: instanceData[i].w unchanged
-        //}
+        for (int i = 0; i < NUM_SPHERES; i++) {
+            // Update positions (e.g., rotate in circle)
+            float time = glfwGetTime();
+            float angle = (i / (float)NUM_SPHERES) * 2.0f * 3.14159f + time;
+            instancedData[i].x = cos(angle) * 10.0f;
+            instancedData[i].y = sin(angle) * 10.0f;
+            instancedData[i].z = 0.0f;
+            // Keep same scale: instanceData[i].w unchanged
+        }
 
         glBindBuffer(GL_ARRAY_BUFFER, instancedVBO);
         glBufferData(GL_ARRAY_BUFFER, instancedData.size() * sizeof(glm::vec4), instancedData.data(), GL_DYNAMIC_DRAW);

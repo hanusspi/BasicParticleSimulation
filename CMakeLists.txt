@@ -39,6 +39,7 @@ set(SOURCES
     src/glad.c
     src/shader.cpp
     src/geometry.cpp
+    src/sim.cpp
 )
 
 # Create executable
@@ -49,9 +50,7 @@ target_link_libraries(ParticleSimulation
     ${OPENGL_LIBRARIES}
     glfw
     ${CMAKE_DL_LIBS}
-    ${CUDA_LIBRARIES}
-    ${CUDA_CUDA_LIBRARY}
-    ${CUDA_CUDART_LIBRARY}
+
 )
 
 # Copy shader files to build directory
