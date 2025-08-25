@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(ParticleSimulation LANGUAGES CXX CUDA)
+project(ParticleSimulation LANGUAGES CXX)
 
 # Add platform-specific settings
 if(MSVC)
@@ -36,10 +36,17 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 # Add source files
 set(SOURCES
     src/main.cpp
-    src/glad.c
+    external/glad/src/glad.c
     src/shader.cpp
     src/geometry.cpp
-    src/sim.cpp
+    src/application.cpp
+    src/camera.cpp
+    src/input_handler.cpp
+    src/opengl_renderer.cpp
+    src/particle_simulation.cpp
+    src/particle_system.cpp
+    src/physics_engine.cpp
+    src/particle.cpp
 )
 
 # Create executable
