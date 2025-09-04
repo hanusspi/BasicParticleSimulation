@@ -19,4 +19,11 @@ public:
     virtual void getFramebufferSize(int* width, int* height) = 0;
     virtual double getTime() = 0;
     virtual void setVSync(bool enabled) = 0;
+    
+    // Input handling
+    virtual void setCamera(std::shared_ptr<Camera> camera) = 0;
+    virtual void processInput(float deltaTime) = 0;
+    virtual bool isCloseRequested() const = 0;
+    virtual bool isVSyncToggled() const = 0;
+    virtual void resetVSyncToggle() = 0;
 };

@@ -9,6 +9,8 @@ void Particle::integrate(float deltaTime) {
     
     velocity += ((acceleration + oldAcceleration) / 2.0f) * deltaTime * 0.7f;
     position += velocity * deltaTime + 0.5f * oldAcceleration * deltaTime * deltaTime;
+    
+    // Note: rotation remains identity matrix for spheres
 }
 
 void Particle::resetForces() {

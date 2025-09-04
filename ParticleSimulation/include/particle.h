@@ -11,6 +11,9 @@ public:
     float radius = 0.05f;
     float mass = 1.0f;
     
+    // Keep rotation for rendering compatibility (always identity for spheres)
+    glm::mat3 rotation{1.0f};
+    
     Particle() = default;
     Particle(const glm::vec3& pos, float r, float m, const glm::vec3& col = glm::vec3(1.0f))
         : position(pos), radius(r), mass(m), color(col) {}

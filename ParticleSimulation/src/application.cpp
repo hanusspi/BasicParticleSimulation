@@ -1,23 +1,21 @@
 #include "application.h"
 #include "opengl_renderer.h"
-#include "particle_simulation.h"
+#include "world_simulation.h"
 #include <iostream>
 
 Application::Application() 
     : renderer(std::make_unique<OpenGLRenderer>()),
-      simulation(std::make_unique<ParticleSimulation>()),
-      inputHandler(std::make_unique<InputHandler>()),
+      simulation(std::make_unique<WorldSimulation>()),
       camera(std::make_shared<Camera>()) {
 }
 
 bool Application::initialize() {
-    if (!renderer->initialize(1200, 900, "Particle Simulation")) {
+    if (!renderer->initialize(1200, 900, "Particle World Simulation")) {
         std::cerr << "Failed to initialize renderer" << std::endl;
         return false;
     }
     
-    inputHandler->initialize(static_cast<GLFWwindow*>(renderer->getWindow()));
-    inputHandler->setCamera(camera);
+    renderer->setCamera(camera);
     
     simulation->initialize(createDefaultConfig());
     
@@ -61,18 +59,17 @@ void Application::mainLoop() {
 }
 
 void Application::handleEvents() {
-    inputHandler->processKeyboard(static_cast<GLFWwindow*>(renderer->getWindow()), 
-                                 static_cast<float>(frameTime));
+    renderer->processInput(static_cast<float>(frameTime));
     
-    if (inputHandler->shouldClose()) {
+    if (renderer->isCloseRequested()) {
         running = false;
     }
     
-    if (inputHandler->isVSyncToggled()) {
+    if (renderer->isVSyncToggled()) {
         vsyncEnabled = !vsyncEnabled;
         renderer->setVSync(vsyncEnabled);
         std::cout << "VSync: " << (vsyncEnabled ? "ON" : "OFF") << std::endl;
-        inputHandler->resetVSyncToggle();
+        renderer->resetVSyncToggle();
     }
 }
 
@@ -108,7 +105,6 @@ void Application::shutdown() {
     std::cout << "Shutting down application..." << std::endl;
     
     simulation.reset();
-    inputHandler.reset();
     camera.reset();
     renderer->shutdown();
     renderer.reset();
@@ -118,11 +114,12 @@ void Application::shutdown() {
 
 SimulationConfig Application::createDefaultConfig() const {
     SimulationConfig config;
-    config.numParticles = 2000;
+    config.numParticles = 1000;
     config.gravity = glm::vec3(0.0f, -9.81f, 0.0f);
     config.springConstant = 10000.0f;
-    config.bounds = BoundingBox(glm::vec3(-1.0f), glm::vec3(1.0f));
-    config.particleDefaults.defaultRadius = 0.05f;
+    // Expand bounds significantly to reduce overcrowding
+    config.bounds = BoundingBox(glm::vec3(-5.0f, -5.0f, -5.0f), glm::vec3(5.0f, 5.0f, 5.0f));
+    config.particleDefaults.defaultRadius = 0.25f;
     config.particleDefaults.defaultMass = 1.0f;
     config.particleDefaults.velocityRange = glm::vec3(2.0f);
     

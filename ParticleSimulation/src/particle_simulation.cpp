@@ -36,28 +36,29 @@ void ParticleSimulation::reset() {
 void ParticleSimulation::updateRenderData() {
     const auto& particles = particleSystem->getParticles();
     
-    renderData.instances.clear();
-    renderData.instances.reserve(particles.size());
-    renderData.instanceCount = particles.size();
+    renderData.clear();
+    
+    // Get sphere render group
+    RenderGroup* sphereGroup = renderData.getRenderGroup("sphere");
+    if (!sphereGroup) {
+        return; // Geometry not initialized yet
+    }
+    
+    sphereGroup->instances.clear();
+    sphereGroup->instances.reserve(particles.size());
     
     for (const auto& particle : particles) {
-        InstanceData instance(particle.position, particle.radius, particle.color);
-        renderData.instances.push_back(instance);
+        InstanceData instance(particle.position, particle.radius, particle.color, particle.rotation);
+        sphereGroup->instances.push_back(instance);
     }
+    
+    sphereGroup->instanceCount = sphereGroup->instances.size();
 }
 
 void ParticleSimulation::initializeGeometry() {
     geometryGen->createGeometry();
     
-    auto vertices = geometryGen->getVertices();
-    auto indices = geometryGen->getIndices();
-    
-    renderData.geometry.vertices = std::move(vertices);
-    
-    renderData.geometry.indices.clear();
-    for (const auto& index : indices) {
-        renderData.geometry.indices.push_back(index[0]);
-        renderData.geometry.indices.push_back(index[1]);
-        renderData.geometry.indices.push_back(index[2]);
-    }
+    // Convert to GeometryData and add to renderData
+    GeometryData sphereGeometry = geometryGen->toGeometryData("sphere");
+    renderData.addRenderGroup("sphere", sphereGeometry);
 }

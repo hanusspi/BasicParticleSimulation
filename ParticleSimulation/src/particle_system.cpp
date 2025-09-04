@@ -19,9 +19,9 @@ void ParticleSystem::generateInitialPositions(int count) {
         int z = i / (cubeSize * cubeSize);
         
         glm::vec3 position{
-            x * 2.0f / cubeSize - 1.0f,
-            y * 2.0f / cubeSize - 1.0f,
-            z * 2.0f / cubeSize - 1.0f
+            x * 1.0f / cubeSize - 1.0f,
+            y * 1.0f / cubeSize - 1.0f,
+            z * 1.0f / cubeSize - 1.0f
         };
         
         float radius = config.defaultRadius + 
@@ -29,6 +29,8 @@ void ParticleSystem::generateInitialPositions(int count) {
         
         Particle particle(position, radius, config.defaultMass, generateRandomColor());
         particle.velocity = generateRandomVelocity();
+        
+        // Note: rotation remains identity matrix (no rotation needed for spheres)
         
         particles.push_back(particle);
     }

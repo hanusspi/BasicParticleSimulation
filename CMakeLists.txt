@@ -1,69 +1,43 @@
 cmake_minimum_required(VERSION 3.10)
-project(ParticleSimulation LANGUAGES CXX)
+project(ParticleSimulationSuite LANGUAGES CXX)
+
+# Set C++17 standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Add platform-specific settings
 if(MSVC)
-    # Use static runtime for MSVC
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    # Disable warnings about unsafe functions
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
+# Global external dependencies setup
+set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
 
-# Add GLAD - manually downloaded by user
-# Put GLAD in external/glad/include/glad and external/glad/include/KHR
-include_directories(${CMAKE_SOURCE_DIR}/external/glad/include)
+# Add GLAD
+include_directories(${EXTERNAL_DIR}/glad/include)
 
-# Add GLFW
+# Add GLFW (build once at root level)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)  
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
-add_subdirectory(${CMAKE_SOURCE_DIR}/external/glfw)
-include_directories(${CMAKE_SOURCE_DIR}/external/glfw/include)
+add_subdirectory(${EXTERNAL_DIR}/glfw)
 
 # Add GLM
-include_directories(${CMAKE_SOURCE_DIR}/external/glm)
+include_directories(${EXTERNAL_DIR}/glm)
 
-# Include project headers
-include_directories(${CMAKE_SOURCE_DIR}/include)
-include_directories(${CMAKE_SOURCE_DIR}/cuda)
-
-# OpenGL
+# Find OpenGL
 find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIRS})
 
-# Add source files
-set(SOURCES
-    src/main.cpp
-    external/glad/src/glad.c
-    src/shader.cpp
-    src/geometry.cpp
-    src/application.cpp
-    src/camera.cpp
-    src/input_handler.cpp
-    src/opengl_renderer.cpp
-    src/particle_simulation.cpp
-    src/particle_system.cpp
-    src/physics_engine.cpp
-    src/particle.cpp
-)
+# Build RenderingEngine as a static library
+add_subdirectory(RenderingEngine)
 
-# Create executable
-add_executable(ParticleSimulation ${SOURCES})
+# Build ParticleSimulation using RenderingEngine library
+add_subdirectory(ParticleSimulation)
 
-# Link libraries
-target_link_libraries(ParticleSimulation
-    ${OPENGL_LIBRARIES}
-    glfw
-    ${CMAKE_DL_LIBS}
-
-)
-
-# Copy shader files to build directory
-file(COPY ${CMAKE_SOURCE_DIR}/shaders DESTINATION ${CMAKE_BINARY_DIR})
-
-# On Windows, copy required DLLs to binary directory for easier execution
-if(WIN32)
-    # This is where we would copy DLLs if needed
+# Set ParticleSimulation as the startup project in Visual Studio
+if(MSVC)
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ParticleSimulation)
 endif()
+

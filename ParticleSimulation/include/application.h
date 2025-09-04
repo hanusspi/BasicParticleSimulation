@@ -2,7 +2,6 @@
 #include <memory>
 #include "renderer.h"
 #include "simulation.h"
-#include "input_handler.h"
 #include "camera.h"
 #include "core.h"
 
@@ -18,7 +17,6 @@ public:
 private:
     std::unique_ptr<Renderer> renderer;
     std::unique_ptr<Simulation> simulation;
-    std::unique_ptr<InputHandler> inputHandler;
     std::shared_ptr<Camera> camera;
     
     bool running = false;
