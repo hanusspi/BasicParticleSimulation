@@ -11,7 +11,7 @@ void ParticleSimulation::initialize(const SimulationConfig& cfg) {
     config = cfg;
     physicsEngine = std::make_unique<PhysicsEngine>(config);
     
-    particleSystem->initialize(config.numParticles, config.particleDefaults);
+    particleSystem->initialize(config.numParticles, config.particleDefaults, config.bounds);
     
     initializeGeometry();
     updateRenderData();
@@ -29,7 +29,7 @@ const RenderData& ParticleSimulation::getRenderData() const {
 }
 
 void ParticleSimulation::reset() {
-    particleSystem->initialize(config.numParticles, config.particleDefaults);
+    particleSystem->initialize(config.numParticles, config.particleDefaults, config.bounds);
     updateRenderData();
 }
 

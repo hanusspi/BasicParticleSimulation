@@ -14,7 +14,7 @@ void WorldSimulation::initialize(const SimulationConfig& config) {
     physicsEngine = std::make_unique<PhysicsEngine>(config);
     
     // Initialize particle system
-    particleSystem->initialize(config.numParticles, config.particleDefaults);
+    particleSystem->initialize(config.numParticles, config.particleDefaults, config.bounds);
     
     // Initialize world
     world->initialize();
@@ -45,7 +45,7 @@ const RenderData& WorldSimulation::getRenderData() const {
 
 void WorldSimulation::reset() {
     // Reset particle system
-    particleSystem->initialize(config.numParticles, config.particleDefaults);
+    particleSystem->initialize(config.numParticles, config.particleDefaults, config.bounds);
     
     // Reset world (clear and recreate)
     world->clear();

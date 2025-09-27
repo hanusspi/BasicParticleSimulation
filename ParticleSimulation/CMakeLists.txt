@@ -15,6 +15,7 @@ set(PARTICLE_SIMULATION_SOURCES
     src/particle_system.cpp
     src/physics_engine.cpp
     src/particle.cpp
+    src/hash_grid.cpp
 )
 
 # Create the executable

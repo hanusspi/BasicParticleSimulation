@@ -132,7 +132,7 @@ struct ParticleConfig {
 };
 
 struct SimulationConfig {
-    int numParticles = 2000;
+    int numParticles = 10000;
     glm::vec3 gravity = glm::vec3(0.0f, -9.81f, 0.0f);
     float springConstant = 10000.0f;
     BoundingBox bounds = BoundingBox(glm::vec3(-1.0f), glm::vec3(1.0f));
