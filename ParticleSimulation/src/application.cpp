@@ -114,12 +114,12 @@ void Application::shutdown() {
 
 SimulationConfig Application::createDefaultConfig() const {
     SimulationConfig config;
-    config.numParticles = 7000;
+    config.numParticles = 28000;
     config.gravity = glm::vec3(0.0f, -9.81f, 0.0f);
     config.springConstant = 1000.0f;
     // Expand bounds significantly to reduce overcrowding
     config.bounds = BoundingBox(glm::vec3(-5.0f, -5.0f, -5.0f), glm::vec3(5.0f, 5.0f, 5.0f));
-    config.particleDefaults.defaultRadius = 0.15f;
+    config.particleDefaults.defaultRadius = 0.05f;
     config.particleDefaults.defaultMass = 1.0f;
     config.particleDefaults.velocityRange = glm::vec3(2.0f);
     
